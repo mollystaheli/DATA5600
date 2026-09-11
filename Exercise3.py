@@ -1,31 +1,34 @@
+# import needed packages to get random numbers and make graphs
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Set the randomization seed so we get the same results each time
+# Set the randomization seed
 rng = np.random.default_rng(123)
 
-# Function to simulate Harmons peanut butter sales
+# Function to simulate Harmons peanut butter sales, based off code we used in class
+# Using price, if there was a promotion, if they use the loyalty program or not, and the overall traffic at the store
 def simulate_sales(n, intercept, price_effect, promotion_effect,
                    loyalty_effect, traffic_effect, sigma):
 
-    # Simulate the price of the peanut butter
-    product_price = rng.normal(5, 0.75, size=n)
+    # Simulate the price of the peanut butter, $4 on average and SD of $0.75
+    product_price = rng.normal(4, 0.75, size=n)
 
     # Simulate whether the product was promoted
-    # 0 = no promotion, 1 = promotion
+    # 0 means no promotion, 1 means promotion, and 50% of either outcome
     promotion = rng.binomial(1, 0.5, size=n)
 
     # Simulate whether the customer is a loyalty member
-    # 0 = not a member, 1 = loyalty member
+    # 0 means not a member, 1 means loyalty member, and 60% change they are a member
     loyalty_member = rng.binomial(1, 0.6, size=n)
 
     # Simulate the amount of store traffic
+    # around 500 customers and SD of 100
     store_traffic = rng.normal(500, 100, size=n)
 
-    # Add normally distributed random error
+    # Add normally distributed random error 
     error = rng.normal(0, sigma, size=n)
 
-    # Calculate total sales
+    # Calculate total sales 
     sales = (intercept
              + price_effect * product_price
              + promotion_effect * promotion
@@ -36,9 +39,9 @@ def simulate_sales(n, intercept, price_effect, promotion_effect,
     return sales, product_price, promotion, loyalty_member, store_traffic
 
 
-# Generate 100 simulated observations
+# Generate 500 simulated observations, had chat help me with these numbers, used n=500 so scatter plots look more normal
 sales, product_price, promotion, loyalty_member, store_traffic = simulate_sales(
-    n=100,
+    n=500,
     intercept=10,
     price_effect=-2.5,
     promotion_effect=8,
@@ -47,9 +50,29 @@ sales, product_price, promotion, loyalty_member, store_traffic = simulate_sales(
     sigma=5
 )
 
-# Print the first 10 observations
+# Print 10 observations
 print("Sales:", sales[:10])
 print("Product Price:", product_price[:10])
 print("Promotion:", promotion[:10])
 print("Loyalty Member:", loyalty_member[:10])
 print("Store Traffic:", store_traffic[:10])
+
+
+# Now visulaize the simulated data using two plots
+# Create a scatter plot to see the price vs the sales, and labeling it correctly
+plt.figure() 
+plt.scatter(product_price, sales)
+plt.xlabel('Product Price')
+plt.ylabel('Sales')
+plt.title('Product Price vs. Sales')
+plt.show()
+
+# Create a new figure
+plt.figure()
+
+# Create a new plot but this time with traffic and sales
+plt.scatter(store_traffic, sales)
+plt.xlabel("Store Traffic")
+plt.ylabel("Sales")
+plt.title("Store Traffic vs. Sales")
+plt.show()
